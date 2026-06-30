@@ -4,6 +4,7 @@ import (
 	"job-monitoring-platform/api/internal/database"
 	"job-monitoring-platform/api/internal/jobs"
 	"job-monitoring-platform/api/internal/routes"
+	"job-monitoring-platform/api/internal/users"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ func main() {
 		log.Println("No .env file found. Using exisisting enviroment variables")
 	}
 	database.Connect()
-	database.DB.AutoMigrate(&jobs.Job{})
+	database.DB.AutoMigrate(&jobs.Job{}, &users.User{})
 
 	router := gin.Default()
 	router.GET("/ping", func(c *gin.Context) {
@@ -25,5 +26,6 @@ func main() {
 	})
 
 	routes.SetupProtectedRoutes(router)
+	routes.SetupUnprotectedRoutes(router)
 	router.Run()
 }
