@@ -1,14 +1,19 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"job-monitoring-platform/api/internal/database"
 	"job-monitoring-platform/api/internal/jobs"
+	"job-monitoring-platform/api/internal/routes"
+	"log"
+
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	godotenv.Load()
+	if err := godotenv.Load("../../.env"); err != nil {
+		log.Println("No .env file found. Using exisisting enviroment variables")
+	}
 	database.Connect()
 	database.DB.AutoMigrate(&jobs.Job{})
 
@@ -18,5 +23,7 @@ func main() {
 			"message": "pong",
 		})
 	})
+
+	routes.SetupProtectedRoutes(router)
 	router.Run()
 }
