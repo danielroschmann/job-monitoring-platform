@@ -9,4 +9,5 @@ import (
 func SetupProtectedRoutes(router *gin.Engine) {
 	router.POST("/jobs", jobs.CreateJob())
 	router.GET("/job/:id", jobs.GetJob())
+	router.DELETE("/job/:id", jobs.DeleteJob())
 }

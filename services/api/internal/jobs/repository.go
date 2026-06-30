@@ -47,3 +47,20 @@ func CreateJob() gin.HandlerFunc {
 		c.JSON(http.StatusCreated, job)
 	}
 }
+
+func DeleteJob() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(c, 5*time.Second)
+		defer cancel()
+
+		id := c.Param("id")
+		var job Job
+
+		if err := database.DB.WithContext(ctx).Delete(&job, id).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete job"})
+			return
+		}
+
+		c.JSON(http.StatusOK, &job)
+	}
+}
