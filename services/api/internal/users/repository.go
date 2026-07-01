@@ -7,7 +7,18 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
+
+func HashPassword(password string) (string, error) {
+	HashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(HashedPassword), nil
+}
 
 func CreateUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -19,6 +30,14 @@ func CreateUser() gin.HandlerFunc {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Invalid user input"})
 			return
 		}
+
+		hashedPassword, err := HashPassword(user.Password)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+			return
+		}
+
+		user.Password = hashedPassword
 
 		if err := database.DB.WithContext(ctx).Create(&user).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
