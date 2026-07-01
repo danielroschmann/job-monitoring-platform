@@ -1,4 +1,20 @@
 services:
+  api:
+    build: ./services/api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-job_monitoring}
+      DB_SSLMODE: disable
+      REDIS_HOST: redis
+
   postgres:
     image: postgres:17-alpine
     environment:
@@ -9,6 +25,12 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 volumes:
   postgres_data:
+  redis_data:

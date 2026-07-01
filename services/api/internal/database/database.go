@@ -17,7 +17,7 @@ func Connect() {
 		getEnv("DB_HOST", "localhost"),
 		getEnv("DB_PORT", "5432"),
 		getEnv("DB_USER", "postgres"),
-		os.Getenv("DB_PASSWORD"),
+		getEnv("DB_PASSWORD", ""),
 		getEnv("DB_NAME", "job_monitoring"),
 		getEnv("DB_SSLMODE", "disable"),
 	)
