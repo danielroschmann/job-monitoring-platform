@@ -9,4 +9,5 @@ import (
 func SetupUnprotectedRoutes(router *gin.Engine) {
 	router.POST("/users", users.CreateUser())
 	router.GET("/user/:id", users.GetUser())
+	router.POST("/login", users.LoginUser())
 }

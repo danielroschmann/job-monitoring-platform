@@ -14,6 +14,7 @@ services:
       DB_NAME: ${DB_NAME:-job_monitoring}
       DB_SSLMODE: disable
       REDIS_HOST: redis
+      REDIS_PORT: 6379
 
   postgres:
     image: postgres:17-alpine

@@ -10,3 +10,8 @@ type User struct {
 	Password  string     `json:"password"`
 	Jobs      []jobs.Job `gorm:"many2many:user_jobs"`
 }
+
+type UserLogin struct {
+	Email    string `json:"email"`
+	Password string `json:"password,omitempty"`
+}

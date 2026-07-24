@@ -3,6 +3,7 @@ package main
 import (
 	"job-monitoring-platform/api/internal/database"
 	"job-monitoring-platform/api/internal/jobs"
+	"job-monitoring-platform/api/internal/redis"
 	"job-monitoring-platform/api/internal/routes"
 	"job-monitoring-platform/api/internal/users"
 	"log"
@@ -16,6 +17,7 @@ func main() {
 		log.Println("No .env file found. Using exisisting enviroment variables")
 	}
 	database.Connect()
+	redis.Connect()
 	database.DB.AutoMigrate(&jobs.Job{}, &users.User{})
 
 	router := gin.Default()

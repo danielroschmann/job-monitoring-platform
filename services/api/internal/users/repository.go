@@ -20,6 +20,36 @@ func HashPassword(password string) (string, error) {
 	return string(HashedPassword), nil
 }
 
+func LoginUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var userLogin UserLogin
+
+		if err := c.ShouldBindJSON(&userLogin); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+			return
+		}
+
+		ctx, cancel := context.WithTimeout(c, 5*time.Second)
+		defer cancel()
+
+		var user User
+
+		if err := database.DB.WithContext(ctx).Where("email = ?", userLogin.Email).First(&user).Error; err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password."})
+			return
+		}
+
+		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userLogin.Password))
+
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+			return
+		}
+
+		c.JSON(http.StatusOK, user)
+	}
+}
+
 func CreateUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(c, 5*time.Second)
