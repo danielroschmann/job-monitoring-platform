@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -45,6 +46,10 @@ func LoginUser() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 			return
 		}
+
+		session := sessions.Default(c)
+		session.Set("userId", user.ID)
+		session.Save()
 
 		c.JSON(http.StatusOK, user)
 	}
