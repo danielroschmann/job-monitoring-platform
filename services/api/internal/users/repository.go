@@ -99,3 +99,12 @@ func GetUser() gin.HandlerFunc {
 		c.JSON(http.StatusOK, user)
 	}
 }
+
+func LogoutUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		session.Clear()
+		session.Save()
+		c.JSON(http.StatusOK, gin.H{"message": "Logged out"})
+	}
+}
