@@ -18,7 +18,7 @@ func RequireAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
+		c.Set("userId", userId)
 		c.Next()
 	}
 }
