@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"job-monitoring-platform/api/internal/database"
+	"log"
 	"net/http"
 	"time"
 
@@ -49,7 +50,11 @@ func LoginUser() gin.HandlerFunc {
 
 		session := sessions.Default(c)
 		session.Set("userId", user.ID)
-		session.Save()
+		if err := session.Save(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save session"})
+			log.Println(err)
+			return
+		}
 
 		c.JSON(http.StatusOK, user)
 	}

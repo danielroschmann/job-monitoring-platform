@@ -3,9 +3,12 @@ package main
 import (
 	"job-monitoring-platform/api/internal/database"
 	"job-monitoring-platform/api/internal/jobs"
+	"job-monitoring-platform/api/internal/messaging"
+	"job-monitoring-platform/api/internal/middleware"
 	"job-monitoring-platform/api/internal/redis"
 	"job-monitoring-platform/api/internal/routes"
 	"job-monitoring-platform/api/internal/users"
+
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -18,9 +21,15 @@ func main() {
 	}
 	database.Connect()
 	redis.Connect()
+	rabbit, err := messaging.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rabbit.Close()
 	database.DB.AutoMigrate(&jobs.Job{}, &users.User{})
 
 	router := gin.Default()
+	router.Use(middleware.SessionMiddleware())
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",

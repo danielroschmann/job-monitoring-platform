@@ -15,7 +15,9 @@ services:
       DB_SSLMODE: disable
       REDIS_HOST: redis
       REDIS_PORT: 6379
-
+      SESSION_SECRET: ${SESSION_SECRET}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672      
   postgres:
     image: postgres:17-alpine
     environment:
@@ -32,6 +34,18 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+  rabbitmq:
+    image: rabbitmq:4-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 volumes:
   postgres_data:
   redis_data:
+  rabbitmq_data:
