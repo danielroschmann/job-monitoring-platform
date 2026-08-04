@@ -1,6 +1,7 @@
 package messaging
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -108,6 +109,7 @@ func (rc *RabbitClient) SetupInfrastructure() error {
 			return err
 		}
 	}
+
 	return nil
 
 }
