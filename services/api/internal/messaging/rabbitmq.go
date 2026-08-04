@@ -15,7 +15,7 @@ type RabbitClient struct {
 func Connect() (*RabbitClient, error) {
 	url := fmt.Sprintf(
 		"amqp://%s:%s@%s:%s/",
-		os.Getenv("RABBITMQUSER"),
+		os.Getenv("RABBITMQ_USER"),
 		os.Getenv("RABBITMQ_PASSWORD"),
 		os.Getenv("RABBITMQ_HOST"),
 		os.Getenv("RABBITMQ_PORT"),
@@ -44,9 +44,19 @@ func Connect() (*RabbitClient, error) {
 	}, nil
 }
 
-func (rc RabbitClient) Close() error {
-	if err := rc.conn.Close(); err != nil {
+func (rc *RabbitClient) Close() error {
+	if err := rc.ch.Close(); err != nil {
 		return err
 	}
 	return rc.conn.Close()
+}
+
+func (rc *RabbitClient) DeclareExchange(name string, exchangeType string, durable bool) error {
+	return rc.ch.ExchangeDeclare(name, exchangeType, durable, false, false, false, nil)
+}
+func (rc *RabbitClient) SetupInfrastructure() error {
+	if err := rc.DeclareExchange("jobs", "topic", true); err != nil {
+		return err
+	}
+	return nil
 }

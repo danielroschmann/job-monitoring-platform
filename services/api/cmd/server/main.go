@@ -26,6 +26,10 @@ func main() {
 		log.Fatal(err)
 	}
 	defer rabbit.Close()
+
+	if err := rabbit.SetupInfrastructure(); err != nil {
+		log.Fatal(err)
+	}
 	database.DB.AutoMigrate(&jobs.Job{}, &users.User{})
 
 	router := gin.Default()
